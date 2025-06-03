@@ -1,6 +1,4 @@
 import os
-os.environ["CUDA_VISIBLE_DEVICES"] = "-1"
-os.environ["YOLO_CONFIG_DIR"] = "/tmp"
 import re
 import cv2
 import av
@@ -29,7 +27,7 @@ try:
 except Exception as e:
     st.error(f"Failed to load YOLO model: {e}")
     st.stop()
-ocr = easyocr.Reader(['en'], gpu=False)  # Set gpu=True if GPU is available
+ocr = easyocr.Reader(['en'], gpu=True)  # Set gpu=True if GPU is available
 ner_model = spacy.load(NER_MODEL_PATH)
 
 # === Tracking ===
