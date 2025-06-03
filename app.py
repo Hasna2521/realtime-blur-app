@@ -23,7 +23,7 @@ LICENSE_ID = 0
 
 # === Load models ===
 model = YOLO(MODEL_PATH)
-ocr = easyocr.Reader(['en'], gpu=False)  # Set gpu=True if GPU is available
+ocr = easyocr.Reader(['en'], gpu=True)  # Set gpu=True if GPU is available
 ner_model = spacy.load(NER_MODEL_PATH)
 
 # === Tracking ===
