@@ -1,4 +1,6 @@
 import os
+os.environ["CUDA_VISIBLE_DEVICES"] = "-1"
+os.environ["YOLO_CONFIG_DIR"] = "/tmp"
 import re
 import cv2
 import av
@@ -11,10 +13,6 @@ from collections import defaultdict
 from supervision import Detections, ByteTrack
 from streamlit_webrtc import webrtc_streamer, WebRtcMode, VideoProcessorBase
 
-
-
-os.environ["CUDA_VISIBLE_DEVICES"] = "-1"  # Disable GPU for all libs
-
 # === CONFIGURATION ===
 BASE_DIR = os.path.dirname(os.path.abspath(__file__))
 MODEL_PATH = os.path.join(BASE_DIR, 'models', 'best_new.pt')
@@ -26,7 +24,11 @@ BADGE_ID = 1
 LICENSE_ID = 0
 
 # === Load models ===
+try:
 model = YOLO(MODEL_PATH)
+except Exception as e:
+    st.error(f"Failed to load YOLO model: {e}")
+    st.stop()
 ocr = easyocr.Reader(['en'], gpu=False)  # Set gpu=True if GPU is available
 ner_model = spacy.load(NER_MODEL_PATH)
 
