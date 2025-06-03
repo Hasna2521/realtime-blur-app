@@ -12,8 +12,9 @@ from supervision import Detections, ByteTrack
 from streamlit_webrtc import webrtc_streamer, WebRtcMode, VideoProcessorBase
 
 # === CONFIGURATION ===
-MODEL_PATH = 'C:/Users/Hasna/finalApp/models/best_new.pt'  # Replace with your model path
-NER_MODEL_PATH = 'C:/Users/Hasna/finalApp/models/ner_plate_model4'  # Replace with your NER model path
+BASE_DIR = os.path.dirname(os.path.abspath(__file__))
+MODEL_PATH = os.path.join(BASE_DIR, 'models', 'best_new.pt')
+NER_MODEL_PATH = os.path.join(BASE_DIR, 'models', 'ner_plate_model4')
 
 # === CLASS IDS ===
 FACE_ID = 2
