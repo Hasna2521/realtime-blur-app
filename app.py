@@ -25,7 +25,7 @@ LICENSE_ID = 0
 
 # === Load models ===
 try:
-model = YOLO(MODEL_PATH)
+    model = YOLO(MODEL_PATH)
 except Exception as e:
     st.error(f"Failed to load YOLO model: {e}")
     st.stop()
