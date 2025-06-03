@@ -11,6 +11,10 @@ from collections import defaultdict
 from supervision import Detections, ByteTrack
 from streamlit_webrtc import webrtc_streamer, WebRtcMode, VideoProcessorBase
 
+
+
+os.environ["CUDA_VISIBLE_DEVICES"] = "-1"  # Disable GPU for all libs
+
 # === CONFIGURATION ===
 BASE_DIR = os.path.dirname(os.path.abspath(__file__))
 MODEL_PATH = os.path.join(BASE_DIR, 'models', 'best_new.pt')
