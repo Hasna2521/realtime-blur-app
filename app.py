@@ -2,14 +2,58 @@ import os
 import re
 import cv2
 import av
-import easyocr
 import spacy
 import numpy as np
 import streamlit as st
+import zipfile
+import requests
 from ultralytics import YOLO
 from collections import defaultdict
 from supervision import Detections, ByteTrack
 from streamlit_webrtc import webrtc_streamer, WebRtcMode, VideoProcessorBase
+
+
+def download_and_prepare_easyocr_models():
+    MODELS = {
+        "craft_mlt_25k": {
+            "url": "https://www.jaided.ai/easyocr/models/craft_mlt_25k.zip",
+            "zip_path": "./.EasyOCR/craft_mlt_25k.zip",
+            "extract_to": "./.EasyOCR/craft_mlt_25k"
+        },
+        "en_g2": {
+            "url": "https://www.jaided.ai/easyocr/models/english_g2.zip",
+            "zip_path": "./.EasyOCR/english_g2.zip",
+            "extract_to": "./.EasyOCR/en_g2"
+        }
+    }
+
+    os.makedirs(".EasyOCR", exist_ok=True)
+
+    def download_file(url, dest_path):
+        print(f"Downloading {url} ...")
+        r = requests.get(url, stream=True)
+        with open(dest_path, 'wb') as f:
+            for chunk in r.iter_content(chunk_size=8192):
+                f.write(chunk)
+        print(f"Saved to {dest_path}")
+
+    def unzip_file(zip_path, extract_to):
+        print(f"Unzipping {zip_path} ...")
+        with zipfile.ZipFile(zip_path, 'r') as zip_ref:
+            zip_ref.extractall(extract_to)
+        os.remove(zip_path)
+        print(f"Extracted to {extract_to}")
+
+    for name, model in MODELS.items():
+        if not os.path.exists(model["extract_to"]):
+            download_file(model["url"], model["zip_path"])
+            unzip_file(model["zip_path"], model["extract_to"])
+        else:
+            print(f"{name} model already exists. Skipping download.")
+
+# Automatically prepare models at runtime
+download_and_prepare_easyocr_models()
+import easyocr
 
 # === CONFIGURATION ===
 BASE_DIR = os.path.dirname(os.path.abspath(__file__))
@@ -27,7 +71,7 @@ try:
 except Exception as e:
     st.error(f"Failed to load YOLO model: {e}")
     st.stop()
-ocr = easyocr.Reader(['en'], gpu=True)  # Set gpu=True if GPU is available
+ocr = easyocr.Reader(['en'], gpu=False, model_storage_directory='./.EasyOCR', recog_network='english_g2') # Set gpu=True if GPU is available
 ner_model = spacy.load(NER_MODEL_PATH)
 
 # === Tracking ===
